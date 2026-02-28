@@ -1,0 +1,49 @@
+{
+  "name": "asciidoc-to-djot",
+  "version": "0.1.0",
+  "description": "Convert NIP-54 wiki articles from Asciidoc to Djot format",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "asciidoc-to-djot": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build",
+    "start": "node dist/cli.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VincenzoImp/asciidoc-to-djot.git"
+  },
+  "keywords": [
+    "nostr",
+    "nip-54",
+    "asciidoc",
+    "djot",
+    "wiki",
+    "converter"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@asciidoctor/core": "^3.0.4",
+    "@djot/djot": "^0.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.2",
+    "tsup": "^8.3.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}
