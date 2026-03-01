@@ -214,7 +214,7 @@ export class DjotConverter {
         lines.push(`: ${termText}`);
       }
       if (desc) {
-        const descText = (desc.getText?.() ?? "").trim();
+        const descText = String(desc.getText?.() ?? "").trim();
         if (descText) {
           lines.push(`  ${descText}`);
         }
@@ -287,7 +287,12 @@ export class DjotConverter {
 
   private convertAdmonition(node: AsciiNode): string {
     const style: string = (node.getStyle?.() ?? "note").toLowerCase();
-    const content = this.convertChildBlocks(node).join("\n\n");
+    let content = this.convertChildBlocks(node).join("\n\n");
+    // Fallback for inline admonitions (e.g. "IMPORTANT: text") where
+    // the text may be in getContent() rather than in child blocks.
+    if (!content) {
+      content = String(node.getContent?.() ?? "").trim();
+    }
     return `{.${style}}\n:::\n${content}\n:::`;
   }
 

@@ -54,11 +54,20 @@ export function convert(
   const converter = new DjotConverter();
   asciidoctor.ConverterFactory.register(converter, ["djot"]);
 
-  const djotRaw: string = asciidoctor.convert(text, {
+  const doc = asciidoctor.load(text, {
     backend: "djot",
-    standalone: false,
     safe: "safe",
-  }) as string;
+  });
+
+  const hasHeader: boolean = doc.hasHeader?.() ?? false;
+  const title = hasHeader
+    ? (doc.getDocumentTitle({ partition: false }) as string | undefined)
+    : undefined;
+  let djotRaw: string = doc.convert() as string;
+
+  if (title) {
+    djotRaw = `# ${title}\n\n${djotRaw}`;
+  }
 
   // 4. Post-process
   const djot = postprocess(djotRaw, placeholders);
@@ -79,4 +88,8 @@ export function convert(
 
 export { DjotConverter } from "./converter.js";
 export { preprocess } from "./preprocess.js";
-export { postprocess, restorePlaceholders } from "./postprocess.js";
+export {
+  postprocess,
+  restorePlaceholders,
+  decodeHtmlEntities,
+} from "./postprocess.js";

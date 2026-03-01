@@ -7,6 +7,23 @@ function c(asciidoc: string): string {
 }
 
 // ---------------------------------------------------------------------------
+// Document title
+// ---------------------------------------------------------------------------
+describe("document title", () => {
+  it("emits document title as h1", () => {
+    expect(c("= My Article\n\nSome content.")).toBe(
+      "# My Article\n\nSome content.",
+    );
+  });
+
+  it("emits document title with sections", () => {
+    const result = c("= My Article\n\n== Section One\n\nParagraph.");
+    expect(result).toContain("# My Article");
+    expect(result).toContain("## Section One");
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Headings
 // ---------------------------------------------------------------------------
 describe("headings", () => {
@@ -222,5 +239,48 @@ describe("quotes", () => {
     const input = "[quote]\n____\nTo be or not to be.\n____";
     const result = c(input);
     expect(result).toContain("> To be or not to be.");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Admonitions
+// ---------------------------------------------------------------------------
+describe("admonitions", () => {
+  it("converts inline admonition paragraph", () => {
+    const result = c("IMPORTANT: Do not forget this.");
+    expect(result).toContain("{.important}");
+    expect(result).toContain("Do not forget this.");
+  });
+
+  it("converts block admonition", () => {
+    const input = "[NOTE]\n====\nThis is a note.\n====";
+    const result = c(input);
+    expect(result).toContain("{.note}");
+    expect(result).toContain("This is a note.");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// HTML entity decoding
+// ---------------------------------------------------------------------------
+describe("HTML entity decoding", () => {
+  it("decodes smart quotes (apostrophes)", () => {
+    // Asciidoctor turns ' into a typographic right single quote
+    const result = c("The world's best.");
+    expect(result).not.toContain("&#8217;");
+    expect(result).toContain("\u2019"); // U+2019 right single quotation mark
+  });
+
+  it("decodes angle brackets in inline code", () => {
+    const result = c("Use `<pubkey>` here.");
+    expect(result).not.toContain("&lt;");
+    expect(result).not.toContain("&gt;");
+    expect(result).toContain("`<pubkey>`");
+  });
+
+  it("decodes &amp; entities", () => {
+    const result = c("A & B");
+    expect(result).not.toContain("&amp;");
+    expect(result).toContain("A & B");
   });
 });
