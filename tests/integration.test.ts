@@ -74,6 +74,11 @@ Block:: A group of transactions
     );
   });
 
+  it("contains document title", () => {
+    const { djot } = convert(asciidocArticle, { validate: false });
+    expect(djot).toContain("# Bitcoin");
+  });
+
   it("contains expected headings", () => {
     const { djot } = convert(asciidocArticle, { validate: false });
     expect(djot).toContain("## History");

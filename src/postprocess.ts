@@ -51,11 +51,33 @@ export function normalizeBlankLines(text: string): string {
   );
 }
 
+/**
+ * Decode HTML entities that Asciidoctor emits (it always HTML-encodes
+ * inline text, even for non-HTML backends).
+ *
+ * Order matters: `&amp;` must be decoded last so that source-literal
+ * sequences like `&amp;lt;` become `&lt;` rather than `<`.
+ */
+export function decodeHtmlEntities(text: string): string {
+  return text
+    .replace(/&#(\d+);/g, (_, code) =>
+      String.fromCodePoint(parseInt(code, 10)),
+    )
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, code) =>
+      String.fromCodePoint(parseInt(code, 16)),
+    )
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, "&");
+}
+
 export function postprocess(
   text: string,
   placeholders: Map<string, Placeholder>,
 ): string {
   let result = text;
+  result = decodeHtmlEntities(result);
   result = restorePlaceholders(result, placeholders);
   result = normalizeBlankLines(result);
   return result;
