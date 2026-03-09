@@ -1,6 +1,6 @@
 {
   "name": "asciidoc-to-djot",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Convert NIP-54 wiki articles from Asciidoc to Djot format",
   "type": "module",
   "main": "./dist/index.js",
